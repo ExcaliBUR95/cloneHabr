@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './counter.scss'
+import counterus from './Counter.module.scss'
 const Counter = () => {
     const [count, setCount] = useState(0)
     const dec = () => {
@@ -9,10 +9,11 @@ const Counter = () => {
         setCount(count + 1)
     }
     return (
-        <div>
+        <div className={counterus.divus}>
             <h1>{count}</h1>
-            <button onClick={inc}>+</button>
-            <button onClick={dec}>-</button>
+            <button className={counterus.btn} onClick={inc}>+</button>
+            <button className={counterus.btn} onClick={dec}>-</button>
+            dasdsadsaasdsa
         </div>
     );
 };
