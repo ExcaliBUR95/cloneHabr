@@ -2,11 +2,12 @@ import { lazy } from "react";
 
 export const AboutPageAsync = lazy(
   () =>
-    new Promise(() => {
+    new Promise((resolve) => {
       //Так в реальных проектах делать не стоит, все это делается, потому что локально подргужается
       // если вдруг будут ошибки, ts-igonre к вашим услугам
       setTimeout(() => {
-        import("./AboutPage");
+        //@ts-ignore
+        resolve(import("./AboutPage"));
       }, 1500);
     })
 );
