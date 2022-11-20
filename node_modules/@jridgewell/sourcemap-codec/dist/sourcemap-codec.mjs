@@ -2,15 +2,15 @@ const comma = ','.charCodeAt(0);
 const semicolon = ';'.charCodeAt(0);
 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 const intToChar = new Uint8Array(64); // 64 possible chars.
-const charToInt = new Uint8Array(128); // z is 122 in ASCII
+const charToInteger = new Uint8Array(128); // z is 122 in ASCII
 for (let i = 0; i < chars.length; i++) {
     const c = chars.charCodeAt(i);
+    charToInteger[c] = i;
     intToChar[i] = c;
-    charToInt[c] = i;
 }
 // Provide a fallback for older environments.
 const td = typeof TextDecoder !== 'undefined'
-    ? /* #__PURE__ */ new TextDecoder()
+    ? new TextDecoder()
     : typeof Buffer !== 'undefined'
         ? {
             decode(buf) {
@@ -30,47 +30,48 @@ const td = typeof TextDecoder !== 'undefined'
 function decode(mappings) {
     const state = new Int32Array(5);
     const decoded = [];
-    let index = 0;
-    do {
-        const semi = indexOf(mappings, index);
-        const line = [];
-        let sorted = true;
-        let lastCol = 0;
-        state[0] = 0;
-        for (let i = index; i < semi; i++) {
-            let seg;
-            i = decodeInteger(mappings, i, state, 0); // genColumn
+    let line = [];
+    let sorted = true;
+    let lastCol = 0;
+    for (let i = 0; i < mappings.length;) {
+        const c = mappings.charCodeAt(i);
+        if (c === comma) {
+            i++;
+        }
+        else if (c === semicolon) {
+            state[0] = lastCol = 0;
+            if (!sorted)
+                sort(line);
+            sorted = true;
+            decoded.push(line);
+            line = [];
+            i++;
+        }
+        else {
+            i = decodeInteger(mappings, i, state, 0); // generatedCodeColumn
             const col = state[0];
             if (col < lastCol)
                 sorted = false;
             lastCol = col;
-            if (hasMoreVlq(mappings, i, semi)) {
-                i = decodeInteger(mappings, i, state, 1); // sourcesIndex
-                i = decodeInteger(mappings, i, state, 2); // sourceLine
-                i = decodeInteger(mappings, i, state, 3); // sourceColumn
-                if (hasMoreVlq(mappings, i, semi)) {
-                    i = decodeInteger(mappings, i, state, 4); // namesIndex
-                    seg = [col, state[1], state[2], state[3], state[4]];
-                }
-                else {
-                    seg = [col, state[1], state[2], state[3]];
-                }
+            if (!hasMoreSegments(mappings, i)) {
+                line.push([col]);
+                continue;
             }
-            else {
-                seg = [col];
+            i = decodeInteger(mappings, i, state, 1); // sourceFileIndex
+            i = decodeInteger(mappings, i, state, 2); // sourceCodeLine
+            i = decodeInteger(mappings, i, state, 3); // sourceCodeColumn
+            if (!hasMoreSegments(mappings, i)) {
+                line.push([col, state[1], state[2], state[3]]);
+                continue;
             }
-            line.push(seg);
+            i = decodeInteger(mappings, i, state, 4); // nameIndex
+            line.push([col, state[1], state[2], state[3], state[4]]);
         }
-        if (!sorted)
-            sort(line);
-        decoded.push(line);
-        index = semi + 1;
-    } while (index <= mappings.length);
+    }
+    if (!sorted)
+        sort(line);
+    decoded.push(line);
     return decoded;
-}
-function indexOf(mappings, index) {
-    const idx = mappings.indexOf(';', index);
-    return idx === -1 ? mappings.length : idx;
 }
 function decodeInteger(mappings, pos, state, j) {
     let value = 0;
@@ -78,7 +79,7 @@ function decodeInteger(mappings, pos, state, j) {
     let integer = 0;
     do {
         const c = mappings.charCodeAt(pos++);
-        integer = charToInt[c];
+        integer = charToInteger[c];
         value |= (integer & 31) << shift;
         shift += 5;
     } while (integer & 32);
@@ -90,10 +91,13 @@ function decodeInteger(mappings, pos, state, j) {
     state[j] += value;
     return pos;
 }
-function hasMoreVlq(mappings, i, length) {
-    if (i >= length)
+function hasMoreSegments(mappings, i) {
+    if (i >= mappings.length)
         return false;
-    return mappings.charCodeAt(i) !== comma;
+    const c = mappings.charCodeAt(i);
+    if (c === comma || c === semicolon)
+        return false;
+    return true;
 }
 function sort(line) {
     line.sort(sortComparator);
@@ -103,19 +107,12 @@ function sortComparator(a, b) {
 }
 function encode(decoded) {
     const state = new Int32Array(5);
-    const bufLength = 1024 * 16;
-    const subLength = bufLength - 36;
-    const buf = new Uint8Array(bufLength);
-    const sub = buf.subarray(0, subLength);
+    let buf = new Uint8Array(1024);
     let pos = 0;
-    let out = '';
     for (let i = 0; i < decoded.length; i++) {
         const line = decoded[i];
         if (i > 0) {
-            if (pos === bufLength) {
-                out += td.decode(buf);
-                pos = 0;
-            }
+            buf = reserve(buf, pos, 1);
             buf[pos++] = semicolon;
         }
         if (line.length === 0)
@@ -125,25 +122,28 @@ function encode(decoded) {
             const segment = line[j];
             // We can push up to 5 ints, each int can take at most 7 chars, and we
             // may push a comma.
-            if (pos > subLength) {
-                out += td.decode(sub);
-                buf.copyWithin(0, subLength, pos);
-                pos -= subLength;
-            }
+            buf = reserve(buf, pos, 36);
             if (j > 0)
                 buf[pos++] = comma;
-            pos = encodeInteger(buf, pos, state, segment, 0); // genColumn
+            pos = encodeInteger(buf, pos, state, segment, 0); // generatedCodeColumn
             if (segment.length === 1)
                 continue;
-            pos = encodeInteger(buf, pos, state, segment, 1); // sourcesIndex
-            pos = encodeInteger(buf, pos, state, segment, 2); // sourceLine
-            pos = encodeInteger(buf, pos, state, segment, 3); // sourceColumn
+            pos = encodeInteger(buf, pos, state, segment, 1); // sourceFileIndex
+            pos = encodeInteger(buf, pos, state, segment, 2); // sourceCodeLine
+            pos = encodeInteger(buf, pos, state, segment, 3); // sourceCodeColumn
             if (segment.length === 4)
                 continue;
-            pos = encodeInteger(buf, pos, state, segment, 4); // namesIndex
+            pos = encodeInteger(buf, pos, state, segment, 4); // nameIndex
         }
     }
-    return out + td.decode(buf.subarray(0, pos));
+    return td.decode(buf.subarray(0, pos));
+}
+function reserve(buf, pos, count) {
+    if (buf.length > pos + count)
+        return buf;
+    const swap = new Uint8Array(buf.length * 2);
+    swap.set(buf);
+    return swap;
 }
 function encodeInteger(buf, pos, state, segment, j) {
     const next = segment[j];
