@@ -1,0 +1,16 @@
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _react = _interopRequireDefault(require("react"));
+const TreeContext = /*#__PURE__*/_react.default.createContext({
+  isChild: false,
+  depth: 0,
+  hasHover: true
+});
+var _default = TreeContext;
+exports.default = _default;
+//# sourceMappingURL=TreeContext.js.map
