@@ -8,7 +8,6 @@ export function buildLoaders({ isDev }: BuildOptions): webpack.RuleSetRule[] {
         use: ['@svgr/webpack'],
     };
 
-    const cssLoader = buildCssLoader(isDev);
     const babelLoader = {
         test: /\.(js|jsx|tsx)$/,
         exclude: /node_modules/,
@@ -19,12 +18,18 @@ export function buildLoaders({ isDev }: BuildOptions): webpack.RuleSetRule[] {
                 plugins: [
                     [
                         'i18next-extract',
-                        { locales: ['ru', 'en'], keyAsDefaultValue: true },
+                        {
+                            locales: ['ru', 'en'],
+                            keyAsDefaultValue: true,
+                        },
                     ],
                 ],
             },
         },
     };
+
+    const cssLoader = buildCssLoader(isDev);
+
     // Если не используем тайпскрипт - нужен babel-loader
     const typescriptLoader = {
         test: /\.tsx?$/,
@@ -41,5 +46,11 @@ export function buildLoaders({ isDev }: BuildOptions): webpack.RuleSetRule[] {
         ],
     };
 
-    return [fileLoader, svgLoader, babelLoader, typescriptLoader, cssLoader];
+    return [
+        fileLoader,
+        svgLoader,
+        babelLoader,
+        typescriptLoader,
+        cssLoader,
+    ];
 }
