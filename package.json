@@ -15,6 +15,9 @@
     "test:ui": "npx loki test",
     "test:ui:ok": "npx loki approve",
     "test:ui:ci": "loki --requireReference --reactUri file:./storybook-static",
+    "test:ui:report": "npm run test:ui:json && npm run test:ui:html",
+    "test:ui:json": "node scripts/generate-visual-json-report.js",
+    "test:ui:html": "reg-cli --from .loki/report.json --report .loki/report.html",
     "storybook": "start-storybook -p 6006 -c ./config/.storybook",
     "storybook:build": "build-storybook -c ./config/.storybook"
   },
@@ -64,6 +67,7 @@
     "jest": "^27.5.1",
     "loki": "^0.31.0",
     "mini-css-extract-plugin": "^2.5.3",
+    "reg-cli": "^0.17.7",
     "regenerator-runtime": "^0.13.9",
     "sass": "^1.49.9",
     "sass-loader": "^12.6.0",
@@ -98,9 +102,9 @@
         "height": 768,
         "deviceScaleFactor": 1,
         "mobile": false,
-         "looks-same": {
-      "ignoreCaret": true
-    }
+        "looks-same": {
+          "ignoreCaret": true
+        }
       },
       "chrome.iphone7": {
         "target": "chrome.app",
