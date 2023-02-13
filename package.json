@@ -88,13 +88,19 @@
     "react-router-dom": "^6.2.1"
   },
   "loki": {
+    "looks-same": {
+      "ignoreCaret": true
+    },
     "configurations": {
       "chrome.laptop": {
         "target": "chrome.app",
         "width": 1366,
         "height": 768,
         "deviceScaleFactor": 1,
-        "mobile": false
+        "mobile": false,
+         "looks-same": {
+      "ignoreCaret": true
+    }
       },
       "chrome.iphone7": {
         "target": "chrome.app",
