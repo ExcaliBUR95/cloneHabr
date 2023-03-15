@@ -1,0 +1,18 @@
+{
+	"Create custom react function component": {
+		"scope": "typescript, typescriptreact",
+		"prefix": "ts",
+		"body": [
+			"import { DeepPartial } from '@reduxjs/toolkit';",
+			"import { StateSchema } from 'app/providers/StoreProvider';",
+			"import { getCounter } from './getCounter';",
+			"",
+			"describe('${TM_FILENAME_BASE}', () => {",
+			"  test('should return counter value', () => {",
+			"    expect().toEqual();",
+			"  });",
+			"});"
+		],
+		"description": "Создать React-test-компонент по умолчанию. Импортируется DeepPartial-модуль и StateSchema для работы с классом getCounter."
+	}
+}

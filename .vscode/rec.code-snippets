@@ -1,0 +1,26 @@
+{
+	"Create custom react function component": {
+		"scope": "typescript, typescriptreact",
+		"prefix": "rec",
+		"body": [
+			"import { classNames } from 'shared/lib/classNames';",
+			"import styles from './${TM_FILENAME_BASE}.module.scss';",
+			"",
+			"import type { PropsWithChildren } from 'react';",
+			"",
+			"interface ${TM_FILENAME_BASE}Props {",
+			"className?: string;",
+			"}",
+			"",
+			"export const ${TM_FILENAME_BASE} = (props: PropsWithChildren<${TM_FILENAME_BASE}Props>) => {",
+			"const { className } = props;",
+			"",
+			"return (",
+			"<div className={classNames(styles.${TM_FILENAME_BASE}, {}, [className])}>",
+			"</div>",
+			");",
+			"}",
+		],
+		"description": "Создать React-компонент по умолчанию. Импортируется scss-модуль и функция для работы с классами classnames."
+	}
+}

@@ -1,18 +1,17 @@
-/* eslint-disable i18next/no-literal-string */
 import { classNames } from 'shared/lib/classNames/classNames';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ThemeSwitcher } from 'shared/ui/ThemeSwitcher';
 import { LangSwitcher } from 'shared/ui/LangSwitcher/LangSwitcher';
-import { useTranslation } from 'react-i18next';
 import { Button, ButtonSize, ThemeButton } from 'shared/ui/Button/Button';
+import { useTranslation } from 'react-i18next';
 import { AppLink, AppLinkTheme } from 'shared/ui/AppLink/AppLink';
 import { RoutePath } from 'shared/config/routeConfig/routeConfig';
-import MainIcon from 'shared/assets/icons/main-20-20.svg';
 import AboutIcon from 'shared/assets/icons/about-20-20.svg';
+import MainIcon from 'shared/assets/icons/main-20-20.svg';
 import cls from './Sidebar.module.scss';
 
 interface SidebarProps {
-  className?: string;
+    className?: string;
 }
 
 export const Sidebar = ({ className }: SidebarProps) => {
@@ -26,23 +25,19 @@ export const Sidebar = ({ className }: SidebarProps) => {
     return (
         <div
             data-testid="sidebar"
-            className={classNames(cls.Sidebar, { [cls.collapsed]: collapsed }, [
-                className,
-            ])}
+            className={classNames(cls.Sidebar, { [cls.collapsed]: collapsed }, [className])}
         >
             <Button
                 data-testid="sidebar-toggle"
-                type="button"
-                className={cls.collapsedBtn}
                 onClick={onToggle}
+                className={cls.collapseBtn}
                 theme={ThemeButton.BACKGROUND_INVERTED}
+                size={ButtonSize.L}
                 square
-                size={ButtonSize.XL}
             >
                 {collapsed ? '>' : '<'}
             </Button>
             <div className={cls.items}>
-
                 <AppLink
                     theme={AppLinkTheme.SECONDARY}
                     to={RoutePath.main}
@@ -63,12 +58,13 @@ export const Sidebar = ({ className }: SidebarProps) => {
                         {t('О сайте')}
                     </span>
                 </AppLink>
-
             </div>
-            <div className={cls.switchers} />
             <div className={cls.switchers}>
                 <ThemeSwitcher />
-                <LangSwitcher short={collapsed} className={cls.lang} />
+                <LangSwitcher
+                    short={collapsed}
+                    className={cls.lang}
+                />
             </div>
         </div>
     );
