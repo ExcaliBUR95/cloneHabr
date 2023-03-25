@@ -3,10 +3,9 @@
 		"scope": "typescript, typescriptreact",
 		"prefix": "rec",
 		"body": [
-			"import { classNames } from 'shared/lib/classNames';",
-			"import styles from './${TM_FILENAME_BASE}.module.scss';",
-			"",
 			"import type { PropsWithChildren } from 'react';",
+			"import { classNames } from 'shared/lib/classNames/classNames';",
+			"import styles from './${TM_FILENAME_BASE}.module.scss';",
 			"",
 			"interface ${TM_FILENAME_BASE}Props {",
 			"className?: string;",
