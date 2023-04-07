@@ -1,5 +1,4 @@
-import { BugButton } from 'app/providers/ErrorBoundary';
-import { Counter } from 'entries/Counter';
+/* eslint-disable i18next/no-literal-string */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Input } from 'shared/ui/Input/Input';

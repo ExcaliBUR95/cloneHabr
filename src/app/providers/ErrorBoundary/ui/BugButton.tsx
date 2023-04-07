@@ -7,23 +7,19 @@ interface BugButtonProps {
 }
 // Компонент для тестирования error boundary
 export const BugButton = () => {
-    const [error, setError] = useState(false)
-    const {t} = useTranslation()
-    const throwError = () => setError(!error)
+    const [error, setError] = useState(false);
+    const { t } = useTranslation();
+    const throwError = () => setError(!error);
 
     useEffect(() => {
-        if(error){
-            throw new Error
+        if (error) {
+            throw new Error();
         }
-    }, [error])
+    }, [error]);
 
-    return(
-        <Button onClick={throwError} >
+    return (
+        <Button onClick={throwError}>
             {t('throw error')}
         </Button>
-    )
-  
-}
-
-
- 
+    );
+};

@@ -6,7 +6,7 @@ import 'shared/config/i18n/i18n';
 // eslint-disable-next-line import/order
 import { ErrorBoundary } from 'app/providers/ErrorBoundary';
 import { StoreProvider } from 'app/providers/StoreProvider';
-import App from './app/providers/App';
+import App from './app/App';
 
 render(
     <StoreProvider>

@@ -20,7 +20,8 @@
     "test:ui:json": "node scripts/generate-visual-json-report.js",
     "test:ui:html": "reg-cli --from .loki/report.json --report .loki/report.html",
     "storybook": "start-storybook -p 6006 -c ./config/.storybook",
-    "storybook:build": "build-storybook -c ./config/.storybook"
+    "storybook:build": "build-storybook -c ./config/.storybook",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
@@ -64,6 +65,7 @@
     "eslint-plugin-storybook": "^0.6.10",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
+    "husky": "^8.0.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.5.1",
     "loki": "^0.31.0",
@@ -85,6 +87,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.0",
+    "axios": "^1.3.4",
     "i18next": "^21.6.11",
     "i18next-browser-languagedetector": "^6.1.3",
     "i18next-http-backend": "^1.3.2",

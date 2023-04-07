@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-boolean-value */
 import { classNames } from 'shared/lib/classNames/classNames';
 import { useState } from 'react';
 import { ThemeSwitcher } from 'shared/ui/ThemeSwitcher';
