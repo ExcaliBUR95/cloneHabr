@@ -6,6 +6,8 @@
 body {
     font: var(--font-m);
     color: var(--primary-color);
+    box-sizing: content-box;
+    margin: 0px auto;
 }
 
 .app {
